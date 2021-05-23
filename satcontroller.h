@@ -7,6 +7,7 @@
 
 #include "gpscontroller.h"
 #include "cameracontroller.h"
+#include "logger.h"
 
 class SatController : public QObject
 {

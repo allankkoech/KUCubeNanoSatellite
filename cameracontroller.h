@@ -10,7 +10,22 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/videoio.hpp>
 
-class CameraRunnable;
+#include "logger.h"
+
+class CameraRunnable :public QObject, public QRunnable
+{
+    Q_OBJECT
+public:
+    explicit CameraRunnable(QObject * parent = nullptr,cv::VideoCapture * videoCapture = nullptr);
+
+    void run();
+
+    cv::VideoCapture * m_VideoCapture;
+
+signals:
+    void finished(bool read,cv::Mat frame);
+};
+
 
 class CameraController : public QObject
 {
@@ -39,21 +54,6 @@ private:
     QThreadPool m_ThreadPool;
 
     bool m_available, m_init;
-};
-
-
-class CameraRunnable :public QObject, public QRunnable
-{
-    Q_OBJECT
-public:
-    explicit CameraRunnable(QObject * parent = nullptr,cv::VideoCapture * videoCapture = nullptr);
-
-    void run();
-
-    cv::VideoCapture * m_VideoCapture;
-
-signals:
-    void finished(bool read,cv::Mat frame);
 };
 
 #endif // CAMERACONTROLLER_H

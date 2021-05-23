@@ -2,6 +2,8 @@
 
 GPSController::GPSController(QString ttyPortName, QObject *parent) : QObject(parent), m_ttyPortName(ttyPortName)
 {
+    logs::debug("Starting to initialize GPS Port.");
+
     m_serialPort = new QSerialPort(parent);
 
     connect(m_serialPort,&QSerialPort::readyRead,this,&GPSController::onReadyRead);
@@ -15,6 +17,8 @@ GPSController::~GPSController()
         m_serialPort->close();
 
     delete m_serialPort;
+
+    logs::debug("Ending GPS Port Controller.");
 }
 
 bool GPSController::init()
@@ -23,13 +27,13 @@ bool GPSController::init()
 
     foreach(const QSerialPortInfo &serialPortInfo, QSerialPortInfo::availablePorts())
     {
-        qDebug()<<"Identifier: "<<serialPortInfo.hasVendorIdentifier()<<"Product Identifier: "<<serialPortInfo.hasProductIdentifier()<<"Port Name: "<<serialPortInfo.portName();
+        logs::debug(QString("Identifier: ")+(serialPortInfo.hasVendorIdentifier()? "true":"false")+"Product Identifier: "+serialPortInfo.hasProductIdentifier()+"Port Name: "+serialPortInfo.portName());
 
         if(serialPortInfo.portName().contains(m_ttyPortName, Qt::CaseSensitive))
         {
             m_portName = serialPortInfo.portName();
 
-            qDebug()<<"GPS Serial Port at "<< m_portName;
+            logs::debug("GPS Serial Port at '"+ m_portName+"'");
 
             break;
         }
@@ -73,7 +77,7 @@ bool GPSController::init()
 
             if(m_isAvailable)
             {
-                logs::debug("Port opened, changing port configurations to \n\tBAUD - 115200\n\tDATA - 8\n\tPARITY - NOPATITY CHECK\n\tSTOP BIT - ONESTOP\n\tFLOW CONTOL - NO FLOW CONTROL");
+                logs::debug("Port opened, changing port configurations to: \n\tBAUD - 115200\n\tDATA - 8\n\tPARITY - NOPATITY CHECK\n\tSTOP BIT - ONESTOP\n\tFLOW CONTOL - NO FLOW CONTROL");
 
                 m_serialPort->setBaudRate(QSerialPort::Baud115200);
                 m_serialPort->setDataBits(QSerialPort::Data8);
@@ -103,14 +107,12 @@ bool GPSController::init()
 
 void GPSController::onReadyRead()
 {
-    QString data=QString::fromUtf8(m_serialPort->readAll());
-
-    qInfo() << "Received Data: " << data;
-
-    QStringList dataSplit = data.split("\n");
-
-    foreach(QString d,dataSplit)
+    while(m_serialPort->canReadLine())
     {
+        QString d=QString::fromUtf8(m_serialPort->readLine());
+
+        logs::info("GPS : "+d.remove("\r\n"));
+
         if(d.length()>0)
         {
             QStringList segmentedData=d.split(",");
@@ -120,10 +122,10 @@ void GPSController::onReadyRead()
                 if(segmentedData.length()==1)
                 {
                     // Debug info received
-                    qDebug() << "GPS::DEBUG: " << segmentedData.at(0);
+                    logs::debug("GPS log - "+segmentedData.at(0));
                 }
 
-                if(segmentedData.length()==4)
+                if(segmentedData.length()==15)
                 {
                     // Filter for GPGGA data lines only
                     if( segmentedData.at(0).contains("GPGGA", Qt::CaseSensitive) )
@@ -137,6 +139,7 @@ void GPSController::onReadyRead()
                             latitude = segmentedData.at(4).toDouble();
 
                             emit gpsReceived(true, latitude, longitude);
+                            logs::info("Valid GPS data received LAT: "+QString::number(latitude)+" LONG: "+QString::number(longitude));
                             continue;
                         }
                     }
@@ -152,8 +155,8 @@ void GPSController::gpsSerialPortError(QSerialPort::SerialPortError error)
     {
         m_serialPort->close();
 
-        qDebug()<<"GPS Serial Port Error: "<<error;
+        logs::warn("GPS Serial Port Error: "+QString(error));
 
-        // startedSerializerPort(m_serialPort->isOpen());
+        // emit error signal
     }
 }

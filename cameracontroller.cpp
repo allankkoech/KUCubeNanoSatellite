@@ -2,7 +2,8 @@
 
 CameraController::CameraController(QObject *parent) : QObject(parent)
 {
-
+    logs::debug("Starting Camera Controller Setup.");
+    m_VideoCapture = new cv::VideoCapture();
 }
 
 CameraController::~CameraController()
@@ -10,21 +11,45 @@ CameraController::~CameraController()
     delete m_cameraRunnable;
 
     delete m_VideoCapture;
+
+    logs::debug("Closing Camera Controller and cleaning up.");
 }
 
 void CameraController::init()
 {
-    m_VideoCapture->open(0,cv::CAP_ANY);
+    logs::debug("Initializing VideoCapture in Camera Controller.");
 
-    m_available=m_VideoCapture->isOpened();
-
-    if(m_available)
+    try
     {
-        m_cameraRunnable = new CameraRunnable(this,m_VideoCapture);
+        m_VideoCapture->open(0, cv::CAP_ANY);
 
-        connect(m_cameraRunnable,SIGNAL(finished(bool,cv::Mat)),this,SLOT(processFrame(bool,cv::Mat)));
+        m_available=m_VideoCapture->isOpened();
 
-        runCameraRunnable();
+        if(m_available)
+        {
+            m_cameraRunnable = new CameraRunnable(this,m_VideoCapture);
+
+            connect(m_cameraRunnable,SIGNAL(finished(bool,cv::Mat)),this,SLOT(processFrame(bool,cv::Mat)));
+
+            runCameraRunnable();
+
+            logs::debug("All setup in Camera Confuguration");
+        }
+    }
+
+    catch(std::exception& e)
+    {
+        logs::warn("Failed to initialize Camera: "+QString::fromStdString(e.what()));
+    }
+
+    catch(cv::Exception& e)
+    {
+        logs::warn("Failed to initialize Camera: "+QString::fromStdString(e.what()));
+    }
+
+    catch(...)
+    {
+        logs::warn("Failed to initialize Camera: Unknown Exception");
     }
 }
 

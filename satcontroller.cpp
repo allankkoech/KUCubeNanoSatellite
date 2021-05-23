@@ -4,15 +4,10 @@ SatController::SatController(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<cv::Mat>("cv::Mat");
 
-
-    qDebug() << "Starting GPS initialization ...";
-
     // Initialize GPS Controller
     gpsController = new GPSController("ttyACM");
 
     gpsController->init();
-
-    qDebug() << "Starting Camera initialization ...";
 
     // Initialize Camera Controller
     cameraController = new CameraController();
