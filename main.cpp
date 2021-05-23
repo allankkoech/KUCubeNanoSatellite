@@ -1,8 +1,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#include "satcontroller.h"
-#include "logger.h"
+#include "cpp/satcontroller.h"
+#include "cpp/logger.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,4 +15,6 @@ int main(int argc, char *argv[])
     return a.exec();
 
     logs::debug("Ending KU Nano Satellite 2021");
+
+    // std::cin.get();
 }

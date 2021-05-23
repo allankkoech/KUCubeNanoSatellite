@@ -9,20 +9,20 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        cameracontroller.cpp \
-        gpscontroller.cpp \
+        cpp/cameracontroller.cpp \
+        cpp/gpscontroller.cpp \
         main.cpp \
-        rtccontroller.cpp \
-        satcontroller.cpp \
-        transreceiver.cpp
+        cpp/rtccontroller.cpp \
+        cpp/satcontroller.cpp \
+        cpp/transreceiver.cpp
 
 HEADERS += \
-    cameracontroller.h \
-    gpscontroller.h \
-    logger.h \
-    rtccontroller.h \
-    satcontroller.h \
-    transreceiver.h
+    cpp/cameracontroller.h \
+    cpp/gpscontroller.h \
+    cpp/logger.h \
+    cpp/rtccontroller.h \
+    cpp/satcontroller.h \
+    cpp/transreceiver.h
 
 INCLUDEPATH += /usr/local/include/opencv4/
 LIBS += -L/usr/local/lib64/ -lopencv_objdetect -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_highgui -lopencv_videoio -lopencv_dnn  # -ldlib

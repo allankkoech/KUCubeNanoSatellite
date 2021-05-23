@@ -37,12 +37,12 @@ void CameraController::init()
         }
     }
 
-    catch(std::exception& e)
+    catch(cv::Exception& e)
     {
         logs::warn("Failed to initialize Camera: "+QString::fromStdString(e.what()));
     }
 
-    catch(cv::Exception& e)
+    catch(std::exception& e)
     {
         logs::warn("Failed to initialize Camera: "+QString::fromStdString(e.what()));
     }
