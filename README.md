@@ -1,2 +1,2 @@
 # KUCubeNanoSatellite
-<img src="assets/logo.jpg"/>
+<img src="assets/logo.jpeg"/>
