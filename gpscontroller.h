@@ -8,6 +8,8 @@
 #include <QtDebug>
 #include <QDateTime>
 
+#include "logger.h"
+
 class GPSController : public QObject
 {
     Q_OBJECT

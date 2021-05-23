@@ -2,7 +2,6 @@
 
 CameraController::CameraController(QObject *parent) : QObject(parent)
 {
-    qRegisterMetaType<cv::Mat>("cv::Mat");
 
 }
 

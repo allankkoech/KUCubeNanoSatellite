@@ -19,6 +19,7 @@ SOURCES += \
 HEADERS += \
     cameracontroller.h \
     gpscontroller.h \
+    logger.h \
     rtccontroller.h \
     satcontroller.h \
     transreceiver.h

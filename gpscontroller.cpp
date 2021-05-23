@@ -37,46 +37,63 @@ bool GPSController::init()
 
     if(m_portName.length()>0)
     {
+        logs::debug("Starting configuring GPS Serial Port with portName="+m_portName);
+
         m_serialPort->setPortName(m_portName);
 
-        if(!m_serialPort->isOpen())
-        {
-            try
-            {
-                m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
-            }
-
-            catch (const std::exception &err)
-            {
-                qDebug()<<"Error Opening GPS Serial Port: "<<err.what();
-            }
+        try {
 
             if(!m_serialPort->isOpen())
             {
+                logs::debug("Attempting to open the serial port since its closed.");
+
+                try
+                {
+                    m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
+                }
+
+                catch (const std::exception &err)
+                {
+                    logs::warn("Error Opening GPS Serial Port: "+QString::fromStdString(err.what()));
+                }
+
+                if(!m_serialPort->isOpen())
+                {
+                    m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
+                }
+            }
+
+            else
+            {
+                logs::debug("Attempting restart Serial Port since its already Open.");
+
+                m_serialPort->close();
                 m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
             }
+
+            if(m_isAvailable)
+            {
+                logs::debug("Port opened, changing port configurations to \n\tBAUD - 115200\n\tDATA - 8\n\tPARITY - NOPATITY CHECK\n\tSTOP BIT - ONESTOP\n\tFLOW CONTOL - NO FLOW CONTROL");
+
+                m_serialPort->setBaudRate(QSerialPort::Baud115200);
+                m_serialPort->setDataBits(QSerialPort::Data8);
+                m_serialPort->setParity(QSerialPort::NoParity);
+                m_serialPort->setStopBits(QSerialPort::OneStop);
+                m_serialPort->setFlowControl(QSerialPort::NoFlowControl);
+
+                logs::debug("Configuring GPS Port Completed.");
+
+
+                return true;
+            }
+
+            logs::debug("GPS failed to be opened.");
         }
 
-        else
+        catch (const std::exception &err)
         {
-            m_serialPort->close();
-            m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
+            logs::warn("Fatal Error while initializing GPS :: " + QString::fromStdString(err.what()));
         }
-
-        if(m_isAvailable)
-        {
-            m_serialPort->setBaudRate(QSerialPort::Baud115200);
-            m_serialPort->setDataBits(QSerialPort::Data8);
-            m_serialPort->setParity(QSerialPort::NoParity);
-            m_serialPort->setStopBits(QSerialPort::OneStop);
-            m_serialPort->setFlowControl(QSerialPort::NoFlowControl);
-
-            qDebug()<<"GPS Port Up and running!";
-
-            return true;
-        }
-
-        qDebug()<<"No Serial GPS Device found";
 
         return false;
     }
