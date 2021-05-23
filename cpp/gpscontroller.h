@@ -34,8 +34,6 @@ private:
 
     QString m_portName;
 
-    QList<int> m_data;
-
     bool m_isAvailable;
 
     QString m_ttyPortName;
