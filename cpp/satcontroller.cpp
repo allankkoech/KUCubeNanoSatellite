@@ -5,12 +5,11 @@ SatController::SatController(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<cv::Mat>("cv::Mat");
 
-
     m_cwdPath = qApp->applicationDirPath();
     logs::info("Working from :/CWD/: "+m_cwdPath);
 
     // Initialize GPS Controller
-    gpsController = new GPSController("ttyACM");
+    gpsController = new GPSController(GPS_PORT_NAME);
 
     gpsController->init();
 
