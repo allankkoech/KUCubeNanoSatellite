@@ -45,6 +45,8 @@ void setup()
     Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
     
     rf95.setTxPower(23, false);
+
+	
 }
 
 int16_t packetnum = 0;  // packet counter, we increment per xmission
@@ -64,6 +66,8 @@ void loop()
 		// Now wait for a reply
 		uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
 		uint8_t len = sizeof(buf);
+
+		Serial.print("RH_RF95_MAX_MESSAGE_LEN = "); Serial.println(RH_RF95_MAX_MESSAGE_LEN);
 
 		Serial.println("Waiting for reply..."); delay(10);
 
@@ -94,45 +98,9 @@ void loop()
 void sendPackets(String message)
 {
 	// Transmit radio packets
-
-	int p = 0;
-	
-	if(message.length()%12==0)
-		p = message.length()/12;
-	
-	else
-		p = message.length()/12+1;
-	
-	char pkts[24];
-	sprintf(pkts, "No of packets to send = %d", p);
-	Serial.println(pkts);
-	
-	char radiopacket[20] = "                   ";
-	int i = 0; // index for packet slices
-
-	while(p > 0)
-	{
-		String _buf = message.substring(i, i+12);
-
-		// Make buffer size 19 characters long
-		while(_buf.length() < 19) { _buf += " "; }
-
-		_buf.toCharArray(radiopacket, 20);
-		radiopacket[12] = '#';
-
-		Serial.println(radiopacket);
-
-		itoa(packetnum++, radiopacket+13, 10);
-		Serial.print(">> Sending: "); Serial.println(radiopacket);
-		radiopacket[19] = 0;
-		
-		delay(2);
-		rf95.send((uint8_t *)radiopacket, 20);
-
-		Serial.println("Waiting for packet to complete..."); delay(10);
-		rf95.waitPacketSent();
-
-		i+=12; // increment Packet Counter
-		p -= 1; // Decrement packet number
-	}
+	uint8_t data[message.length()];
+	message.toCharArray(data, message.length());
+	rf95.send(data, sizeof(data));
+	rf95.waitPacketSent();
+	Serial.println("Data Sent ...");
 }
