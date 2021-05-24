@@ -8,7 +8,9 @@
 #include "gpscontroller.h"
 #include "cameracontroller.h"
 #include "transreceiver.h"
+#include "cputemperature.h"
 #include "logger.h"
+#include "globals.h"
 
 class SatController : public QObject
 {
@@ -28,6 +30,10 @@ private slots:
 
     void receivedDataFromLora(const QString &data);
 
+    void onSyncTimerTimeout();
+
+    void onCpuTemptReceived(const float &t);
+
 private:
     GPSController * gpsController;
 
@@ -35,9 +41,15 @@ private:
 
     TransReceiver * transReceiver;
 
+    CpuTemperatureMonitor * cpuTempMonitor;
+
+    QTimer * synctimer;
+
     bool m_isValidGps=false;
 
-    double m_latitude=0, m_longitude=0;
+    double m_latitude=0, m_longitude=0, m_cpu_tempt=0;
+
+    QString m_cwdPath;
 };
 
 #endif // SATCONTROLLER_H
