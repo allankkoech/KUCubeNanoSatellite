@@ -18,6 +18,8 @@ SOURCES += \
 
 HEADERS += \
     cpp/cameracontroller.h \
+    cpp/cputemperature.h \
+    cpp/globals.h \
     cpp/gpscontroller.h \
     cpp/logger.h \
     cpp/rtccontroller.h \
@@ -32,4 +34,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-
+#Copy bash files to build directory to be able to use relative refrencing
+copydata.commands = $(COPY_DIR) $$PWD/bash $$OUT_PWD
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
