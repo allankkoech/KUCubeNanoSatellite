@@ -98,8 +98,10 @@ void loop()
 void sendPackets(String message)
 {
 	// Transmit radio packets
-	uint8_t data[message.length()];
-	message.toCharArray(data, message.length());
+	uint8_t *data;
+	char _x[message.length()];
+	message.toCharArray(_x, message.length());
+	data = (uint8_t *)_x;
 	rf95.send(data, sizeof(data));
 	rf95.waitPacketSent();
 	Serial.println("Data Sent ...");

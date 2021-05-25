@@ -3,5 +3,5 @@
     "board": "arduino:avr:pro",
     "port": "/dev/ttyUSB0",
     "programmer": "arduino:avrisp",
-    "sketch": "Receiver/Receiver.ino"
+    "sketch": "Transmitter/Transmitter.ino"
 }
