@@ -44,7 +44,7 @@ inline CpuTemperatureMonitor::CpuTemperatureMonitor(QString cwd, QObject *parent
     connect(m_temperatureProbeProcess, &QProcess::readyReadStandardOutput, this, &CpuTemperatureMonitor::onReadyRead);
 
     m_timer = new QTimer(this);
-    m_timer->setInterval(500);
+    m_timer->setInterval(1000);
     connect(m_timer, &QTimer::timeout, this, &CpuTemperatureMonitor::fetchCpuTemperature);
     m_timer->start();
 
