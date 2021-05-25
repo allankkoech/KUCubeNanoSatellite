@@ -61,6 +61,11 @@ bool GPSController::init()
                     logs::warn("Error Opening GPS Serial Port: "+QString::fromStdString(err.what()));
                 }
 
+                catch (...)
+                {
+                    logs::warn("Error Opening GPS Serial Port: Unknown Error");
+                }
+
                 if(!m_serialPort->isOpen())
                 {
                     m_isAvailable=m_serialPort->open(QSerialPort::ReadWrite);
