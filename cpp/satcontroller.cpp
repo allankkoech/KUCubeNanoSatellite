@@ -73,8 +73,9 @@ void SatController::onSyncTimerTimeout()
 
     auto t = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
 
-    QString payload = "=>"+QString::number(t)+":"+QString::number(m_latitude);
-    payload+=":"+QString::number(m_longitude)+"=>";
+    QString payload = QString::number(t)+":"+QString::number(m_latitude);
+    payload += ":"+QString::number(m_longitude)+":"+QString::number(m_cpu_tempt);
+    payload += ":"+QString::number(0)+":"+QString::number(0)+"\r\n";
 
     logs::info("Payload to send: "+payload);
     sendDataOverLora(payload);
