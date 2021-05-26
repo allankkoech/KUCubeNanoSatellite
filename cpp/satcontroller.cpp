@@ -16,7 +16,7 @@ SatController::SatController(QObject *parent) : QObject(parent)
     // Initialize Camera Controller
     cameraController = new CameraController();
 
-    cameraController->init();
+    // cameraController->init();
 
     // Initialize transreceiver module
     transReceiver = new TransReceiver(TRANSRECEIVER_PORT_NAME, TRANSRECEIVER_USB_PORT);
@@ -73,8 +73,8 @@ void SatController::onSyncTimerTimeout()
 
     auto t = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
 
-    QString payload = QString::number(t)+":"+QString::number(m_latitude);
-    payload += ":"+QString::number(m_longitude)+":"+QString::number(m_cpu_tempt);
+    QString payload = QString::number(t)+":"+QString::number(-1.181249/*m_latitude*/);
+    payload += ":"+QString::number(36.938152/*m_longitude*/)+":"+QString::number(m_cpu_tempt);
     payload += ":"+QString::number(0)+":"+QString::number(0)+"\r\n";
 
     logs::info("Payload to send: "+payload);

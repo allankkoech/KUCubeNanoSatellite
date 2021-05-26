@@ -60,15 +60,60 @@ void loop()
             RH_RF95::printBuffer("Received: ", buf, len);
             Serial.print("Got: ");
             Serial.println((char*)buf);
-            Serial.print("RSSI: ");
-            Serial.println(rf95.lastRssi(), DEC);
+
+            char d[len];
+            String val = "";
+            uint8_t ind = 0;
+
+            Serial.println("\nRECEIVED DATA:");
+
+            for(int i=0; i<len; i++)
+            {
+                d[i] = (char)buf[i];
+
+                if(d[i]==':')
+                {
+                    if(ind==0)
+                    {
+                        Serial.print("\tTimestamp      : "); Serial.println(val);
+                    }
+
+                    if(ind==1)
+                    {
+                        Serial.print("\tLatitude       : "); Serial.print(val); Serial.println(" N");
+                    }
+
+                    if(ind==2)
+                    {
+                        Serial.print("\tLongitude      : "); Serial.print(val); Serial.println(" E");
+                    }
+
+                    if(ind==3)
+                    {
+                        Serial.print("\tCPU Temperature: "); Serial.print(val); Serial.println(" °C");
+                    }
+
+                    if(ind==4)
+                    {
+                        Serial.print("\tHumidity       : "); Serial.print(val); Serial.println(" %");
+                    }
+
+                    val="";
+                    ind++;
+                }
+
+                else
+                {
+                    val += d[i];
+                }
+            }
+
+            Serial.println("\n");
             
             // Send a reply
-            char x[] = "And hello back to you";
-            uint8_t *data = (uint8_t *)x;
+            uint8_t data[] = "OK";
             rf95.send(data, sizeof(data));
             rf95.waitPacketSent();
-            Serial.println("Sent a reply");
             digitalWrite(LED, LOW);
         }
 

@@ -77,9 +77,7 @@ void loop()
 			if (rf95.recv(buf, &len))
 			{
 				Serial.print("Got reply: ");
-				Serial.println((char*)buf);
-				Serial.print("RSSI: ");
-				Serial.println(rf95.lastRssi(), DEC);    
+				Serial.println((char*)buf); 
 			}
 
 			else
@@ -98,10 +96,16 @@ void loop()
 void sendPackets(String message)
 {
 	// Transmit radio packets
-	uint8_t *data;
-	char _x[message.length()];
+	char _x[message.length()+1];
 	message.toCharArray(_x, message.length());
-	data = (uint8_t *)_x;
+
+	uint8_t data[message.length()+1];
+
+	for (int i = 0; i < message.length()+1; i++)
+	{
+		data[i] = uint8_t(_x[i]);
+	}
+
 	rf95.send(data, sizeof(data));
 	rf95.waitPacketSent();
 	Serial.println("Data Sent ...");
